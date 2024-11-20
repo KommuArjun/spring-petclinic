@@ -47,7 +47,7 @@ pipeline {
                     export DOCKER_IMAGE=${DOCKER_IMAGE}
                     export IMAGE_TAG=${IMAGE_TAG}
                     # Substitute environment variables into deployment.yaml
-                    envsubst < ${DEPLOYMENT_FILE} > updated-deployment.yaml
+                    envsubst < k8s/deployment.yaml > deployment.yaml
                     cat updated-deployment.yaml  # Optional: To check if the substitution worked
                 """
             }
@@ -60,7 +60,7 @@ pipeline {
                 echo "Deploying to EKS..."
                 sh """
                     kubectl apply -f ${SERVICE_FILE} -n ${EKS_NAMESPACE}
-                    kubectl apply -f updated-deployment.yaml -n ${EKS_NAMESPACE}
+                    kubectl apply -f ${DEPLOYMENT_FILE} -n ${EKS_NAMESPACE}
                 """
             }
         }
