@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: spring-petclinic
-        image: kommuarjun/spring-petclinic:latest
+        image: "{{DOCKER_IMAGE}}:{{IMAGE_TAG}}"  # Placeholder for image and tag
         ports:
         - containerPort: 8080

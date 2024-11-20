@@ -1,12 +1,12 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "kommuarjun/spring-petclinic" // Replace with your Docker Hub username and image name
-        DOCKER_CREDENTIALS_ID = "docker-hub-credentials-id"      // Replace with your Jenkins Docker Hub credentials ID
-        DEPLOYMENT_FILE = "k8s/deployment.yaml"                   // Path to your deployment file in the repository
-        SERVICE_FILE = "k8s/service.yaml"                         // Path to your service file in the repository
-        EKS_NAMESPACE = "default"                                 // Replace with your namespace
-        IMAGE_TAG = "${BUILD_NUMBER}"                             // Use Jenkins build number as the image tag
+        DOCKER_IMAGE = "kommuarjun/spring-petclinic"  // Replace with your Docker image name
+        DOCKER_CREDENTIALS_ID = "docker-hub-credentials-id"  // Jenkins Docker Hub credentials ID
+        DEPLOYMENT_FILE = "k8s/deployment.yaml"  // Path to your deployment file
+        SERVICE_FILE = "k8s/service.yaml"  // Path to your service file
+        EKS_NAMESPACE = "default"  // Replace with your desired namespace
+        IMAGE_TAG = "${BUILD_NUMBER}"  // Use Jenkins build number as image tag
     }
     stages {
         stage('Clone Repository') {
@@ -44,19 +44,23 @@ pipeline {
             steps {
                 echo "Updating Kubernetes deployment file with the new Docker image..."
                 sh """
-                    sed -i 's|image: .*|image: ${DOCKER_IMAGE}:${IMAGE_TAG}|' ${DEPLOYMENT_FILE}
+                    export DOCKER_IMAGE=${DOCKER_IMAGE}
+                    export IMAGE_TAG=${IMAGE_TAG}
+                    # Substitute environment variables into deployment.yaml
+                    envsubst < ${DEPLOYMENT_FILE} > updated-deployment.yaml
+                    cat updated-deployment.yaml  # Optional: To check if the substitution worked
                 """
             }
         }
         stage('Deploy to EKS') {
             agent {
-                label 'eks' 
+                label 'eks'  // Specify the Jenkins node labeled as 'eks'
             }
             steps {
                 echo "Deploying to EKS..."
                 sh """
                     kubectl apply -f ${SERVICE_FILE} -n ${EKS_NAMESPACE}
-                    kubectl apply -f ${DEPLOYMENT_FILE} -n ${EKS_NAMESPACE}
+                    kubectl apply -f updated-deployment.yaml -n ${EKS_NAMESPACE}
                 """
             }
         }
