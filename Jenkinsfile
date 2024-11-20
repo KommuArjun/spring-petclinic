@@ -49,44 +49,44 @@ pipeline {
                 sh """
                     # Imperative kubectl command to create the deployment
                     kubectl apply -f - <<EOF
-                    apiVersion: apps/v1
-                    kind: Deployment
-                    metadata:
-                      name: spring-petclinic
-                      namespace: ${EKS_NAMESPACE}
-                    spec:
-                      replicas: 2
-                      selector:
-                        matchLabels:
-                          app: spring-petclinic
-                      template:
-                        metadata:
-                          labels:
-                            app: spring-petclinic
-                        spec:
-                          containers:
-                          - name: spring-petclinic
-                            image: ${DOCKER_IMAGE}:${IMAGE_TAG}
-                            ports:
-                            - containerPort: 8080
-                    EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-petclinic
+  namespace: ${EKS_NAMESPACE}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-petclinic
+  template:
+    metadata:
+      labels:
+        app: spring-petclinic
+    spec:
+      containers:
+      - name: spring-petclinic
+        image: ${DOCKER_IMAGE}:${IMAGE_TAG}
+        ports:
+        - containerPort: 8080
+EOF
 
                     # Imperative kubectl command to create the service (NodePort)
                     kubectl apply -f - <<EOF
-                    apiVersion: v1
-                    kind: Service
-                    metadata:
-                      name: spring-petclinic
-                      namespace: ${EKS_NAMESPACE}
-                    spec:
-                      selector:
-                        app: spring-petclinic
-                      ports:
-                        - protocol: TCP
-                          port: 80
-                          targetPort: 8080
-                      type: NodePort
-                    EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-petclinic
+  namespace: ${EKS_NAMESPACE}
+spec:
+  selector:
+    app: spring-petclinic
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: NodePort
+EOF
                 """
             }
         }
