@@ -12,7 +12,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo "Cloning the repository..."
-                git 'https://github.com/KommuArjun/spring-petclinic.git'
+                git branch: 'main', url: 'https://github.com/KommuArjun/spring-petclinic.git'
             }
         }
         stage('Build Application') {
