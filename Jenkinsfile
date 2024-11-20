@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/spring-petclinic" // Replace with your Docker Hub username and image name
+        DOCKER_IMAGE = "kommuarjun/spring-petclinic" // Replace with your Docker Hub username and image name
         DOCKER_CREDENTIALS_ID = "docker-hub-credentials-id"      // Replace with your Jenkins Docker Hub credentials ID
         DEPLOYMENT_FILE = "k8s/deployment.yaml"                   // Path to your deployment file in the repository
         SERVICE_FILE = "k8s/service.yaml"                         // Path to your service file in the repository
